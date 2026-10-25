@@ -12,4 +12,15 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
+// ADD THIS CATCH BLOCK AT THE BOTTOM:
+// It tests the pool instantly on bootup without stalling your module export exports.
+pool.getConnection()
+  .then((conn) => {
+    console.log("🚀 [Database] Connected successfully to MySQL!");
+    conn.release();
+  })
+  .catch((err) => {
+    console.error("⏳ [Database] Warning: MySQL is still initializing. Pool will retry on first query.", err.message);
+  });
+
 module.exports = pool;
